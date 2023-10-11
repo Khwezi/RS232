@@ -47,4 +47,4 @@ jobs:
         name: serialrider
         path: build
     - name: build the docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build . --file Dockerfile --tag serialrider:$(date +%s)
