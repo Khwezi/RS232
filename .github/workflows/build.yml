@@ -46,11 +46,11 @@ jobs:
       with:
         name: serialrider
         path: build    
-    - name: 'Login via Azure CLI'
+    - name: 'login via azure cli'
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}        
-    - name: 'Build and push image'
+    - name: 'docker build and push image'
       uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
@@ -60,7 +60,7 @@ jobs:
       run: |
         docker build . --file build/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
-    - name: 'Deploy to Azure Container Instances'
+    - name: 'deploy to azure container instances'
       uses: 'azure/aci-deploy@v1'
       with:
         resource-group: ${{ secrets.RESOURCE_GROUP }}
