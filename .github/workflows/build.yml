@@ -27,7 +27,7 @@ jobs:
     - name: copy build artifacts
       run: |
         mkdir downloads
-        cp /home/runner/work/RS232/RS232/RS232.SerialRider/bin/Debug/net7.0/* downloads/
+        cp -r /home/runner/work/RS232/RS232/RS232.SerialRider/bin/Debug/net7.0/* downloads/
     - name: upload build artifact
       uses: actions/upload-artifact@v3.1.3
       with:
