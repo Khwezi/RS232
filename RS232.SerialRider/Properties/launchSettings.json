@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "RS232.SerialRider": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
