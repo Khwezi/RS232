@@ -27,4 +27,5 @@ jobs:
     - name: upload build artifact
       uses: actions/upload-artifact@v3.1.3
       with:
-        name: serialrider 
+        name: serialrider
+        path: downloads

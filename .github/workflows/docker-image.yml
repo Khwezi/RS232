@@ -14,5 +14,6 @@ jobs:
       uses: actions/download-artifact@v2.1.1
       with:
         name: serialrider
+        path: downloads
     - name: build the docker image
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
