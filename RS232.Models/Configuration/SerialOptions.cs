@@ -2,7 +2,7 @@
 
 public class SerialOptions
 {
-    public string PortName { get; set; }
+    public string? PortName { get; set; }
 
     public int BaudRate { get; set; }
 

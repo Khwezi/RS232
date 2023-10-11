@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using RS232.Models.Configuration;
 using System.IO.Ports;
 
@@ -8,7 +10,10 @@ var configuration = new ConfigurationBuilder()
     .AddCommandLine(args)
     .Build();
 
+var services = new ServiceCollection().AddLogging().BuildServiceProvider();
 var settings = configuration.GetRequiredSection(nameof(SerialOptions)).Get<SerialOptions>();
+
+var logger = services.GetRequiredService<ILogger<Program>>();
 
 ArgumentNullException.ThrowIfNull(settings);
 
@@ -29,28 +34,33 @@ var serialPort = new SerialPort
     ReadTimeout = (int)settings.ReadTimeout.TotalSeconds,
 };
 
+logger.LogInformation("Opening Port: {0} at BaudRate {1}", settings.PortName, settings.BaudRate);
+
 var cancellationTokenSource = new CancellationTokenSource();
 var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(1));
 
 serialPort.Open();
 
-Console.WriteLine($"Port IsOpen: {serialPort.IsOpen}");
+logger.LogInformation("Port IsOpen: {0}", serialPort.IsOpen);
 
 if (serialPort.IsOpen)
+{
     serialPort.WriteLine("AT");
+    logger.LogWarning("Sent wake AT command");
+}
 
 do
 {
     var line = serialPort.ReadLine();
 
     if(!string.IsNullOrEmpty(line.Trim()))
-        Console.WriteLine(line);
+        logger.LogInformation(line);
 } 
 while (await periodicTimer.WaitForNextTickAsync(cancellationTokenSource.Token) && !cancellationTokenSource.IsCancellationRequested && serialPort.IsOpen);
 
 serialPort.Close();
 
-Console.WriteLine("Serial port closed, shutting down");
+logger.LogWarning("Serial port closed, shutting down");
 
 await periodicTimer.WaitForNextTickAsync();
 periodicTimer.Dispose();
