@@ -17,6 +17,6 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-RUN ls /app/publish
+RUN ls .
 
 ENTRYPOINT ["dotnet", "RS232.SerialRider.dll"]
