@@ -1,7 +1,7 @@
-FROM mcr.microsoft.com/dotnet/runtime:7.0 AS base
+FROM mcr.microsoft.com/dotnet/runtime:7.0-jammy-amd64 AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0-jammy-amd64 AS build
 WORKDIR /src
 COPY ["RS232.SerialRider/RS232.SerialRider.csproj", "RS232.SerialRider/"]
 COPY ["RS232.Models/RS232.Models.csproj", "RS232.Models/"]
