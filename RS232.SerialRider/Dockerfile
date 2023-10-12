@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/runtime:7.0 AS base
 
-WORKDIR /app
+#WORKDIR /app
 
 #FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 #WORKDIR /src
@@ -15,9 +15,9 @@ WORKDIR /app
 #RUN dotnet publish "RS232.SerialRider.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 #FROM base AS final
-WORKDIR /app
+#WORKDIR /app
 
 #COPY --from=build /app/build .
-RUN ls /build
-RUN cp -r /build/* . 
+RUN ls /app/build/
+RUN cp -r /app/build/* . 
 ENTRYPOINT ["dotnet", "RS232.SerialRider.dll"]
