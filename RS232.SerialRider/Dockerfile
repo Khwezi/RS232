@@ -5,13 +5,13 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["RS232.SerialRider/RS232.SerialRider.csproj", "RS232.SerialRider/"]
 COPY ["RS232.Models/RS232.Models.csproj", "RS232.Models/"]
-RUN dotnet restore  -r linux-arm64 "RS232.SerialRider/RS232.SerialRider.csproj"
+RUN dotnet restore "RS232.SerialRider/RS232.SerialRider.csproj" -r linux-arm64
 COPY . .
 WORKDIR "/src/RS232.SerialRider"
-RUN dotnet build  -r linux-arm64 "RS232.SerialRider.csproj" -c Release -o /app/build
+RUN dotnet build "RS232.SerialRider.csproj" -r linux-arm64 -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish  -r linux-arm64 "RS232.SerialRider.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "RS232.SerialRider.csproj" -r linux-arm64 -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
