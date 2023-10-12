@@ -17,7 +17,6 @@ COPY . /app
 #RUN dotnet publish "RS232.SerialRider.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 #FROM base AS final
-#WORKDIR /app
+WORKDIR /app
 ##COPY --from=publish /app/publish .
-#COPY --from=build /app .
 ENTRYPOINT ["dotnet", "RS232.SerialRider.dll"]
