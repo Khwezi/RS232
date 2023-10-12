@@ -47,14 +47,14 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}        
-    - name: 'docker build and push image'
+    - name: 'login to azure container registry'
       uses: azure/docker-login@v1
       with:
         login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    - name: build and push the docker image
-      run: |
-        docker build . --platform linux/arm64 --file build/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
-        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
+    - name: build and docker image
+      run: docker build . --platform linux/arm64 --file build/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
+    - name: push the docker image
+      run: docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
 
