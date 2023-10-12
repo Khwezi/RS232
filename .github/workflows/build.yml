@@ -58,6 +58,6 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - name: build and push the docker image
       run: |
-        docker build . --platform linux/amd64,linux/arm64 --file build/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
+        docker build . --platform linux/arm64 --file build/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
 
