@@ -1,8 +1,8 @@
 FROM mcr.microsoft.com/dotnet/runtime:7.0 AS base
 
-RUN ls
+RUN ls /build
 
-COPY . /app
+RUN cp -r /build/* /app
 
 RUN ls /app
 
