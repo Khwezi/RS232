@@ -54,7 +54,7 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - name: build docker image
-      run: docker buildx build . --platform linux/arm32 --file build/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
+      run: docker buildx build . --platform linux/arm64 --file build/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
     - name: push docker image
       run: docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
 
