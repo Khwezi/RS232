@@ -53,8 +53,8 @@ jobs:
         login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    - name: build and docker image
+    - name: build docker image
       run: docker build . --platform linux --file build/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
-    - name: push the docker image
+    - name: push docker image
       run: docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/serialrider:${{ github.sha }}
 
