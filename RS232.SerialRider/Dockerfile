@@ -1,7 +1,7 @@
-FROM mcr.microsoft.com/dotnet/runtime:7.0.12-bullseye-slim-arm32v7 AS base
+FROM mcr.microsoft.com/dotnet/runtime:7.0-bullseye-slim AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0.12-bullseye-slim-arm32v7 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0-bullseye-slim AS build
 WORKDIR /src
 COPY ["RS232.SerialRider/RS232.SerialRider.csproj", "RS232.SerialRider/"]
 COPY ["RS232.Models/RS232.Models.csproj", "RS232.Models/"]
