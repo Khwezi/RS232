@@ -18,6 +18,7 @@ FROM mcr.microsoft.com/dotnet/runtime:7.0 AS base
 #WORKDIR /app
 
 #COPY --from=build /app/build .
+RUN ls .
 RUN ls ./build
 RUN cp -r ./build/* . 
 ENTRYPOINT ["dotnet", "RS232.SerialRider.dll"]
