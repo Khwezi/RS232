@@ -30,8 +30,8 @@ var serialPort = new SerialPort
     DataBits = 8,
     StopBits = StopBits.One,
     Handshake = Handshake.None,
-    WriteTimeout = (int)settings.WriteTimeout.TotalSeconds,
-    ReadTimeout = (int)settings.ReadTimeout.TotalSeconds,
+    //WriteTimeout = (int)settings.WriteTimeout.TotalSeconds,
+    //ReadTimeout = (int)settings.ReadTimeout.TotalSeconds,
 };
 
 Console.WriteLine("Opening Port: {0} at BaudRate {1}", settings.PortName, settings.BaudRate);
@@ -63,8 +63,11 @@ try
 
         if(!string.IsNullOrEmpty(line.Trim()))
             logger.LogInformation(line);
+
+        if(count++ == 100)
+            break;
     } 
-    while (await periodicTimer.WaitForNextTickAsync(cancellationTokenSource.Token) && !cancellationTokenSource.IsCancellationRequested && serialPort.IsOpen && count++ != 10);
+    while (await periodicTimer.WaitForNextTickAsync(cancellationTokenSource.Token) && !cancellationTokenSource.IsCancellationRequested && serialPort.IsOpen);
 }
 catch(Exception ex)
 {
