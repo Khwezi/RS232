@@ -46,8 +46,13 @@ try
 {
     if (serialPort.IsOpen)
     {
-        serialPort.WriteLine("AT+GPSRD=1");
+        serialPort.WriteLine("AT");
         Console.WriteLine("Sent wake AT command");
+
+        await Task.Delay(TimeSpan.FromSeconds(5), cancellationTokenSource.Token);
+
+        serialPort.WriteLine("AT+GPSRD=1");
+        Console.WriteLine("Sent wake AT+GPSRD=1 command");
     }
 
     int count = 0;
