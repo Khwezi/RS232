@@ -19,7 +19,7 @@ ArgumentNullException.ThrowIfNull(settings);
 
 ArgumentException.ThrowIfNullOrEmpty(settings.PortName, nameof(settings.PortName));
 
-if (settings.BaudRate <= 0) 
+if (settings.BaudRate <= 0)
     throw new ArgumentException("BaudRate is invalid");
 
 var serialPort = new SerialPort
@@ -42,6 +42,14 @@ var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(1));
 serialPort.Open();
 Console.WriteLine("Port IsOpen: {0}", serialPort.IsOpen);
 
+if(!serialPort.IsOpen)
+{
+    Console.WriteLine("Failed to open portm exiting");
+    System.Environment.Exit(0);
+}
+
+var serialStreamReader = new StreamReader(serialPort.BaseStream);
+
 try
 {
     if (serialPort.IsOpen)
@@ -59,23 +67,24 @@ try
 
     do
     {
-        var line = serialPort.ReadLine();
+        //var line = serialPort.ReadLine();
+        var line = serialStreamReader.ReadLine();
 
-        if(!string.IsNullOrEmpty(line.Trim()))
+        if (!string.IsNullOrEmpty(line.Trim()))
             logger.LogInformation(line);
 
-        if(count++ == 100)
+        if (count++ == 100)
             break;
-    } 
+    }
     while (await periodicTimer.WaitForNextTickAsync(cancellationTokenSource.Token) && !cancellationTokenSource.IsCancellationRequested && serialPort.IsOpen);
 }
-catch(Exception ex)
+catch (Exception ex)
 {
     Console.WriteLine(ex.Message);
 }
 finally
 {
-    if(serialPort.IsOpen)
+    if (serialPort.IsOpen)
         serialPort.Close();
 }
 
