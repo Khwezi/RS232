@@ -34,33 +34,44 @@ var serialPort = new SerialPort
     ReadTimeout = (int)settings.ReadTimeout.TotalSeconds,
 };
 
-logger.LogInformation("Opening Port: {0} at BaudRate {1}", settings.PortName, settings.BaudRate);
+Console.WriteLine("Opening Port: {0} at BaudRate {1}", settings.PortName, settings.BaudRate);
 
 var cancellationTokenSource = new CancellationTokenSource();
 var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(1));
 
 serialPort.Open();
+Console.WriteLine("Port IsOpen: {0}", serialPort.IsOpen);
 
-logger.LogInformation("Port IsOpen: {0}", serialPort.IsOpen);
-
-if (serialPort.IsOpen)
+try
 {
-    serialPort.WriteLine("AT");
-    logger.LogWarning("Sent wake AT command");
+    if (serialPort.IsOpen)
+    {
+        serialPort.WriteLine("AT+GPSRD=1");
+        Console.WriteLine("Sent wake AT command");
+    }
+
+    int count = 0;
+
+    do
+    {
+        var line = serialPort.ReadLine();
+
+        if(!string.IsNullOrEmpty(line.Trim()))
+            logger.LogInformation(line);
+    } 
+    while (await periodicTimer.WaitForNextTickAsync(cancellationTokenSource.Token) && !cancellationTokenSource.IsCancellationRequested && serialPort.IsOpen && count++ != 10);
+}
+catch(Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
+finally
+{
+    if(serialPort.IsOpen)
+        serialPort.Close();
 }
 
-do
-{
-    var line = serialPort.ReadLine();
-
-    if(!string.IsNullOrEmpty(line.Trim()))
-        logger.LogInformation(line);
-} 
-while (await periodicTimer.WaitForNextTickAsync(cancellationTokenSource.Token) && !cancellationTokenSource.IsCancellationRequested && serialPort.IsOpen);
-
-serialPort.Close();
-
-logger.LogWarning("Serial port closed, shutting down");
+Console.WriteLine("Serial port closed, shutting down");
 
 await periodicTimer.WaitForNextTickAsync();
 periodicTimer.Dispose();
