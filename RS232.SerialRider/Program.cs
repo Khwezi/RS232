@@ -24,15 +24,20 @@ if (settings.BaudRate <= 0)
 
 var serialPort = new SerialPort
 {
+    Encoding = System.Text.Encoding.UTF8,
     BaudRate = settings.BaudRate,
     PortName = settings.PortName,
     Parity = Parity.None,
     DataBits = 8,
     StopBits = StopBits.One,
     Handshake = Handshake.None,
-    //WriteTimeout = (int)settings.WriteTimeout.TotalSeconds,
-    //ReadTimeout = (int)settings.ReadTimeout.TotalSeconds,
+    DtrEnable = true,    
+    ReadTimeout = 30000,
+    WriteTimeout = 1000
 };
+
+var receiveBuffer = string.Empty;
+serialPort.DataReceived += SerialPort_DataReceived;
 
 Console.WriteLine("Opening Port: {0} at BaudRate {1}", settings.PortName, settings.BaudRate);
 
@@ -45,36 +50,42 @@ Console.WriteLine("Port IsOpen: {0}", serialPort.IsOpen);
 if(!serialPort.IsOpen)
 {
     Console.WriteLine("Failed to open portm exiting");
-    System.Environment.Exit(0);
+    Environment.Exit(0);
 }
 
-var serialStreamReader = new StreamReader(serialPort.BaseStream);
+void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+{
+    string existingData = serialPort.ReadExisting();
+    Console.Write(existingData);
+
+    try
+    {
+        var line = serialPort.ReadLine();
+
+        if(!string.IsNullOrEmpty(line))
+            Console.WriteLine(line);
+    }
+    catch(TimeoutException)
+    {
+        Console.WriteLine(".");
+    }
+}
 
 try
 {
-    if (serialPort.IsOpen)
-    {
-        serialPort.WriteLine("AT");
-        Console.WriteLine("Sent wake AT command");
-
-        await Task.Delay(TimeSpan.FromSeconds(5), cancellationTokenSource.Token);
-
-        serialPort.WriteLine("AT+GPSRD=1");
-        Console.WriteLine("Sent wake AT+GPSRD=1 command");
-    }
-
-    int count = 0;
+    Console.WriteLine("Enter EXIT to stop program");
 
     do
     {
-        //var line = serialPort.ReadLine();
-        var line = serialStreamReader.ReadLine();
+        if (!serialPort.IsOpen)
+            continue;
+            
+        var line = Console.ReadLine();
 
-        if (!string.IsNullOrEmpty(line.Trim()))
-            logger.LogInformation(line);
-
-        if (count++ == 100)
+        if (line?.ToLower().Equals("exit") == true)
             break;
+        
+        serialPort.WriteLine(line);
     }
     while (await periodicTimer.WaitForNextTickAsync(cancellationTokenSource.Token) && !cancellationTokenSource.IsCancellationRequested && serialPort.IsOpen);
 }
